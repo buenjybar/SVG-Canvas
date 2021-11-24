@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="us">
+<head>
+    <title>SVG - Canvas</title>
+    <script src="index.js"></script>
+    <script src="datasource.js"></script>
+    <script src="utils.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.1.1/d3.min.js"></script>
+</head>
+<body>
+<div id="content" style="display: flex;"></div>
+
+<div id="content2"></div>
+
+<script>
+    readJson()
+        .then((data) => {
+            // extract names
+            const leadNames = Object.keys(data);
+            // create the data source
+            const ds = new DataSource();
+            ds.data = data;
+
+            performance.clearMarks();
+            ds.onConnect(render);
+            // ds.onConnect(renderCanvas);
+
+            // ds.onConnect(renderCanvasOptimized);
+            entryPoint("#content", leadNames);
+
+            ds.start();
+        });
+</script>
+</body>
+</html>
