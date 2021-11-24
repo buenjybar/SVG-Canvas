@@ -16,13 +16,17 @@ function entryPoint(ref, leadNames) {
 
     const main = d3.select(ref);
 
-    x = d3.scaleLinear().domain([0, DISPLAY_SECONDS]).range([0, width]);
+    // create scales
+    x = d3.scaleLinear()
+        .domain([0, DISPLAY_SECONDS])
+        .range([0, width]);
 
     y = d3
         .scaleLinear()
         .domain([2 / MV_UNIT, -2 / MV_UNIT])
         .range([0, leadHeight]);
 
+    // create svg reference
     const svg = main
         .append("svg")
         .style("position", "relative")
@@ -30,8 +34,10 @@ function entryPoint(ref, leadNames) {
         .attr("width", width)
         .attr("height", height);
 
-    gPath = svg.append("g").attr("transform", `translate(0,${margin.top})`);
+    gPath = svg.append("g")
+        .attr("transform", `translate(0,${margin.top})`);
 
+    // create canvases
     canvases = [];
     const parent = svg.node().parentElement;
     let offset = margin.top;
@@ -58,7 +64,7 @@ function entryPoint(ref, leadNames) {
 
     gX = svg.append("g");
 
-    // display line index to the left
+    // display leadnames
     svg
         .append("g")
         .selectAll("text")
@@ -69,8 +75,8 @@ function entryPoint(ref, leadNames) {
         .attr("dy", "0.35em")
         .text((d) => d);
 
-    const axis = d3
-        .axisTop(x)
+    // create top axis in seconds
+    const axis = d3.axisTop(x)
         .ticks(width / 80)
         .tickSizeOuter(0);
 
@@ -86,6 +92,7 @@ function entryPoint(ref, leadNames) {
             )
             .call((g) => g.select(".domain").remove());
 
+    // create ruler
     const rule = svg
         .append("line")
         .attr("stroke", "#000")
@@ -97,15 +104,14 @@ function entryPoint(ref, leadNames) {
     svg.on("mousemove", (event) => {
         const pointer = d3.pointer(event, svg.node());
         const x = pointer[0] + 0.5;
-
         // update the cursor coordinates
-        rule.attr("x1", x).attr("x2", x);
+        rule.attr("x1", x)
+            .attr("x2", x);
     });
 }
 
 function render(data) {
-    const line = d3
-        .line()
+    const line = d3.line()
         .x((_, i) => x(i / FREQ))
         .y((d) => y(d));
 
@@ -140,7 +146,6 @@ function renderCanvas(data) {
         drawLine(elem.node(), datElement);
     }
     performance.mark("end-renderCanvas");
-
     performance.measure("renderCanvas", "start-renderCanvas", "end-renderCanvas");
 
     // update the top scale
